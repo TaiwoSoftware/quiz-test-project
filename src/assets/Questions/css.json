@@ -1,0 +1,104 @@
+{
+    "questions": [
+        {
+            "question": "What does CSS stand for?",
+            "options": [
+                "Cascading Style Sheet",
+                "Computer Style Sheet",
+                "Creative Style System",
+                "Colorful Style Sheet"
+            ],
+            "answer": "Cascading Style Sheet"
+        },
+        {
+            "question": "Which property is used to change the background color of an element?",
+            "options": [
+                "color",
+                "background-color",
+                "bgcolor",
+                "background"
+            ],
+            "answer": "background-color"
+        },
+        {
+            "question": "Which CSS property controls the text size?",
+            "options": [
+                "text-size",
+                "font-style",
+                "font-size",
+                "text-style"
+            ],
+            "answer": "font-size"
+        },
+        {
+            "question": "Which property is used to make text bold?",
+            "options": [
+                "font-weight",
+                "bold",
+                "text-bold",
+                "font-style"
+            ],
+            "answer": "font-weight"
+        },
+        {
+            "question": "Which CSS unit is relative to the font size of the element?",
+            "options": [
+                "px",
+                "em",
+                "vh",
+                "%"
+            ],
+            "answer": "em"
+        },
+        {
+            "question": "What is the default position value of an HTML element?",
+            "options": [
+                "relative",
+                "absolute",
+                "static",
+                "fixed"
+            ],
+            "answer": "static"
+        },
+        {
+            "question": "Which CSS property is used to set the spacing between lines of text?",
+            "options": [
+                "line-height",
+                "letter-spacing",
+                "word-spacing",
+                "text-spacing"
+            ],
+            "answer": "line-height"
+        },
+        {
+            "question": "Which CSS property is used to make an element float to the left or right?",
+            "options": [
+                "align",
+                "float",
+                "position",
+                "display"
+            ],
+            "answer": "float"
+        },
+        {
+            "question": "Which CSS property is used to set the transparency of an element?",
+            "options": [
+                "visibility",
+                "opacity",
+                "transparent",
+                "alpha"
+            ],
+            "answer": "opacity"
+        },
+        {
+            "question": "Which CSS property is used to apply shadow to text?",
+            "options": [
+                "text-shadow",
+                "font-shadow",
+                "shadow",
+                "text-glow"
+            ],
+            "answer": "text-shadow"
+        }
+    ]
+}
