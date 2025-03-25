@@ -51,6 +51,8 @@ export const Quiz = () => {
       }
     };
 
+    
+
     fetchQuestions();
   }, []);
 
