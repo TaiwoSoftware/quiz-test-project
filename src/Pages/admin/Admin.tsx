@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const Admin = () => {
-  const [questions, setQuestions] = useState([
+  const [questions, ] = useState([
     {
       question: "What is HTML?",
       options: [
