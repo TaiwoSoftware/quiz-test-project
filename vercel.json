@@ -1,0 +1,6 @@
+{
+    "rewrites": [
+      { "source": "/assessment/:id", "destination": "/index.html" },
+      { "source": "/(.*)", "destination": "/index.html" }
+    ]
+  }
