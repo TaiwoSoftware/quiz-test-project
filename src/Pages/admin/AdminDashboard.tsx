@@ -1,28 +1,37 @@
-import { SetStateAction, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "./supabaseClient";
+import type { Assessment, Question, Participant, Answer } from "./types";
+
+
 
 export const AdminDashboard = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [questions, setQuestions] = useState([
+  const [questions, setQuestions] = useState<Question[]>([
     { question: "", options: ["", "", "", ""], answer: "" },
   ]);
   const [message, setMessage] = useState("");
-  const [assessments, setAssessments] = useState([]);
-  const [selectedAssessment, setSelectedAssessment] = useState(null);
-  const [participants, setParticipants] = useState([]);
+  const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [selectedAssessment, setSelectedAssessment] = useState<string | null>(null);
+  const [participants, setParticipants] = useState<Participant[]>([]);
 
   useEffect(() => {
     fetchAssessments();
   }, []);
 
   const fetchAssessments = async () => {
-    const { data, error } = await supabase.from("assessments").select("*");
+    const { data, error } = await supabase
+      .from("assessments")
+      .select("*");
+  
     if (error) {
       console.error("Error fetching assessments:", error);
-    } else {
-      setAssessments(data);
+      return;
+    }
+  
+    if (data) {
+      setAssessments(data as Assessment[]);
     }
   };
 
@@ -56,15 +65,18 @@ export const AdminDashboard = () => {
     }
   };
 
-
-  const handleCopyLink = (id: unknown) => {
+  const handleCopyLink = (id: string) => {
     const link = `${window.location.origin}/assessment/${id}`;
     navigator.clipboard.writeText(link);
     alert("Link copied to clipboard: " + link);
   };
 
-  const handleDeleteAssessment = async (assessmentId: unknown) => {
-    const { error } = await supabase.from("assessments").delete().eq("id", assessmentId);
+  const handleDeleteAssessment = async (assessmentId: string) => {
+    const { error } = await supabase
+      .from("assessments")
+      .delete()
+      .eq("id", assessmentId);
+      
     if (error) {
       console.error("Error deleting assessment:", error);
     } else {
@@ -72,7 +84,7 @@ export const AdminDashboard = () => {
     }
   };
 
-  const fetchParticipants = async (assessmentId: SetStateAction<null>) => {
+  const fetchParticipants = async (assessmentId: string) => {
     setSelectedAssessment(assessmentId);
 
     const { data, error } = await supabase
@@ -82,8 +94,11 @@ export const AdminDashboard = () => {
 
     if (error) {
       console.error("Error fetching participants:", error);
-    } else {
-      setParticipants(data);
+      return;
+    }
+
+    if (data) {
+      setParticipants(data as Participant[]);
     }
   };
 
@@ -113,7 +128,7 @@ export const AdminDashboard = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full p-3 border rounded-lg mb-4"
-          ></textarea>
+          />
 
           {questions.map((q, index) => (
             <motion.div key={index} className="bg-gray-50 p-4 rounded-lg shadow mt-2">
@@ -132,28 +147,41 @@ export const AdminDashboard = () => {
 
               <div className="ml-4">
                 <p className="font-semibold">Options:</p>
-                {q.options.map((option, i) => (
-                  <input
-                    key={i}
-                    type="text"
-                    placeholder={`Option ${i + 1}`}
-                    value={option}
-                    onChange={(e) => {
-                      const newQuestions = [...questions];
-                      newQuestions[index].options[i] = e.target.value;
-                      setQuestions(newQuestions);
-                    }}
-                    className="w-full p-2 border rounded-lg mt-1"
-                  />
+                {questions.map((q, index) => (
+                  <motion.div key={index} className="bg-gray-50 p-4 rounded-lg shadow mt-2">
+                    {/* ... previous code remains the same */}
+                    {q.options.map((option: string | number | readonly string[] | undefined, i: number) => (
+                      <input
+                        key={i}
+                        type="text"
+                        placeholder={`Option ${i + 1}`}
+                        value={option}
+                        onChange={(e) => {
+                          const newQuestions = [...questions];
+                          newQuestions[index].options[i] = e.target.value;
+                          setQuestions(newQuestions);
+                        }}
+                        className="w-full p-2 border rounded-lg mt-1"
+                      />
+                    ))}
+                    {/* ... the rest of the component */}
+                  </motion.div>
                 ))}
+
               </div>
             </motion.div>
           ))}
 
-          <button onClick={handleAddQuestion} className="mt-4 bg-gray-600 text-white px-4 py-2 rounded-lg">
+          <button 
+            onClick={handleAddQuestion} 
+            className="mt-4 bg-gray-600 text-white px-4 py-2 rounded-lg"
+          >
             Add Question
           </button>
-          <button onClick={handleSaveAssessment} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg ml-4">
+          <button 
+            onClick={handleSaveAssessment} 
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg ml-4"
+          >
             Save Assessment
           </button>
 
@@ -175,22 +203,22 @@ export const AdminDashboard = () => {
                     >
                       {assessment.title}
                     </span>
-                    <button
-                      onClick={() => handleCopyLink(assessment.id)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition"
-                    >
-                      Copy Link
-                    </button>
-
-                    <button
-                      onClick={() => handleDeleteAssessment(assessment.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
-                    >
-                      Delete
-                    </button>
+                    <div className="space-x-2">
+                      <button
+                        onClick={() => handleCopyLink(assessment.id)}
+                        className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition"
+                      >
+                        Copy Link
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAssessment(assessment.id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Show Participants for Selected Assessment */}
                   {selectedAssessment === assessment.id && (
                     <motion.div className="bg-gray-50 p-4 mt-4 rounded-lg">
                       <h3 className="text-lg font-bold">
@@ -207,7 +235,7 @@ export const AdminDashboard = () => {
                               </p>
                               <p className="text-sm text-gray-600">Answers:</p>
                               <ul className="pl-4">
-                                {JSON.parse(participant.answers).map((ans: { selected_answer: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, i: Key | null | undefined) => (
+                                {JSON.parse(participant.answers).map((ans: Answer, i: number) => (
                                   <li key={i} className="text-sm">
                                     <strong>Q{i + 1}:</strong> {ans.selected_answer}
                                   </li>

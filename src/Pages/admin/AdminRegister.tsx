@@ -42,6 +42,7 @@ export const AdminRegister = () => {
 
       console.log("Admin registered:", email);
       navigate("/admin_login"); // Redirect to login page
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setError("Something went wrong. Please try again.");
       console.error(error.message);
