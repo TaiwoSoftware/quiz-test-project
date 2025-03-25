@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import bcrypt from "bcryptjs";
 import image from "../Quiz/book.png";
+import { useMediaQuery } from "react-responsive";
 
 export const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const isMobile = useMediaQuery({ maxWidth: 640 }); // Mobile
+  const isTablet = useMediaQuery({ minWidth: 641, maxWidth: 1024 }); // Tablet
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,23 +49,28 @@ export const AdminLogin = () => {
 
   return (
     <div
-      className="relative w-full h-screen bg-cover bg-center"
+      className="relative w-full min-h-screen flex justify-center items-center bg-cover bg-center px-4"
       style={{ backgroundImage: `url(${image})` }}
     >
-      {/* Background Overlay for Opacity */}
+      {/* Background Overlay */}
       <div className="absolute inset-0 bg-black opacity-70"></div>
 
       {/* Login Container */}
-      <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/4 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center">Admin Login</h2>
+      <div
+        className="relative bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full"
+        style={{
+          maxWidth: isMobile ? "90%" : isTablet ? "70%" : "400px", // Adjust width based on screen size
+        }}
+      >
+        <h2 className="text-xl sm:text-2xl font-bold text-center">Admin Login</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
 
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-gray-700 text-sm sm:text-base">Email</label>
             <input
               type="email"
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded text-sm sm:text-base"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -70,10 +78,10 @@ export const AdminLogin = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700">Password</label>
+            <label className="block text-gray-700 text-sm sm:text-base">Password</label>
             <input
               type="password"
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded text-sm sm:text-base"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -82,12 +90,12 @@ export const AdminLogin = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded"
+            className="w-full bg-blue-500 text-white p-2 rounded text-sm sm:text-base"
           >
             Login
           </button>
 
-          <p className="mt-4 text-center">
+          <p className="mt-4 text-center text-sm sm:text-base">
             Don't have an account?{" "}
             <button
               onClick={() => navigate("/admin_register")}

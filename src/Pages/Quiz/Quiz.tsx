@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import image from "../Quiz/book.png";
-
+import { useMediaQuery } from "react-responsive";
 // ✅ Initialize Supabase
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL!,
@@ -31,7 +31,8 @@ export const Quiz = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentCorrectionIndex, setCurrentCorrectionIndex] = useState(0);
   const navigate = useNavigate();
-
+  const isMobile = useMediaQuery({ maxWidth: 640 });
+  const isTablet = useMediaQuery({ minWidth: 641, maxWidth: 1024 });
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -107,7 +108,7 @@ export const Quiz = () => {
   );
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-screen bg-cover bg-center">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-cover bg-center p-4">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-black bg-opacity-90"
@@ -120,41 +121,38 @@ export const Quiz = () => {
       ></div>
 
       {/* Quiz Container */}
-      <div className="max-w-2xl w-full bg-white p-6 shadow-lg rounded-lg relative z-10">
-        <div className="absolute top-2 right-2 text-xl font-bold text-red-600 animate-bounce">
+      <div
+        className="w-full bg-white p-4 sm:p-6 shadow-lg rounded-lg relative z-10"
+        style={{ maxWidth: isMobile ? "90%" : isTablet ? "80%" : "700px" }}
+      >
+        <div className="absolute top-2 right-2 text-lg sm:text-xl font-bold text-red-600 animate-bounce">
           ⏳ {timeLeft}s
         </div>
 
-        <h2 className="text-2xl font-bold text-center mb-4">Quiz</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-center mb-4">Quiz</h2>
 
         {loading && <p className="text-center text-gray-600">Loading...</p>}
         {error && <p className="text-center text-red-500">{error}</p>}
 
         {quizFinished ? (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="max-w-lg w-full bg-white p-6 shadow-lg rounded-lg text-center">
-              <h3 className="text-xl font-bold mb-4">Quiz Completed!</h3>
-              <p className="text-lg">
-                Your Score:{" "}
-                <span className="text-blue-500">{percentageScore}%</span>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+            <div className="w-full bg-white p-4 sm:p-6 shadow-lg rounded-lg text-center max-w-lg">
+              <h3 className="text-lg sm:text-xl font-bold mb-4">Quiz Completed!</h3>
+              <p className="text-md sm:text-lg">
+                Your Score: <span className="text-blue-500">{percentageScore}%</span>
               </p>
 
               {incorrectAnswers.length > 0 ? (
-                <div className="mt-6 p-4 bg-red-100 border border-red-500 rounded">
-                  <h4 className="text-lg font-semibold text-red-600">
+                <div className="mt-4 p-4 bg-red-100 border border-red-500 rounded">
+                  <h4 className="text-md sm:text-lg font-semibold text-red-600">
                     Incorrect Answer:
                   </h4>
                   <p className="text-red-700 mt-2">
-                    {questions[incorrectAnswers[currentCorrectionIndex]]
-                      ?.question}
+                    {questions[incorrectAnswers[currentCorrectionIndex]]?.question}
                   </p>
                   <p className="text-gray-800 mt-2">
-                    Correct Answer:{" "}
-                    <span className="font-bold text-green-600 ml-1">
-                      {
-                        questions[incorrectAnswers[currentCorrectionIndex]]
-                          ?.correct_answer
-                      }
+                    Correct Answer: <span className="font-bold text-green-600">
+                      {questions[incorrectAnswers[currentCorrectionIndex]]?.correct_answer}
                     </span>
                   </p>
                 </div>
@@ -165,14 +163,14 @@ export const Quiz = () => {
               <div className="mt-6 flex justify-between">
                 {currentCorrectionIndex < incorrectAnswers.length - 1 ? (
                   <button
-                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                     onClick={handleNextCorrection}
                   >
                     Next
                   </button>
                 ) : (
                   <button
-                    className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                    className="px-4 sm:px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
                     onClick={handleGoHome}
                   >
                     Back to Home
@@ -186,9 +184,9 @@ export const Quiz = () => {
           !error &&
           questions.length > 0 && (
             <>
-              <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
+              <div className="w-full bg-gray-200 rounded-full h-3 sm:h-4 mb-4">
                 <div
-                  className="bg-green-500 h-4 rounded-full"
+                  className="bg-green-500 h-full rounded-full"
                   style={{ width: `${progressPercentage}%` }}
                 ></div>
               </div>
@@ -199,34 +197,30 @@ export const Quiz = () => {
                 </p>
 
                 <div className="mt-4">
-                  {questions[currentQuestionIndex]?.options.map(
-                    (option, index) => (
-                      <label
-                        key={index}
-                        className="block w-full px-4 py-2 mt-2 rounded-lg bg-white border cursor-pointer hover:bg-gray-300"
-                      >
-                        <input
-                          type="radio"
-                          name="quiz-option"
-                          value={option}
-                          checked={selectedOption === option}
-                          onChange={() => setSelectedOption(option)}
-                          className="mr-2"
-                        />
-                        {option}
-                      </label>
-                    )
-                  )}
+                  {questions[currentQuestionIndex]?.options.map((option, index) => (
+                    <label
+                      key={index}
+                      className="block w-full px-4 py-2 mt-2 rounded-lg bg-white border cursor-pointer hover:bg-gray-300"
+                    >
+                      <input
+                        type="radio"
+                        name="quiz-option"
+                        value={option}
+                        checked={selectedOption === option}
+                        onChange={() => setSelectedOption(option)}
+                        className="mr-2"
+                      />
+                      {option}
+                    </label>
+                  ))}
                 </div>
 
                 {selectedOption && (
                   <button
-                    className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="mt-4 px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                     onClick={handleNextQuestion}
                   >
-                    {currentQuestionIndex < questions.length - 1
-                      ? "Next"
-                      : "Finish Quiz"}
+                    {currentQuestionIndex < questions.length - 1 ? "Next" : "Finish Quiz"}
                   </button>
                 )}
               </div>

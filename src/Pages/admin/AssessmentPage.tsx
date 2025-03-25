@@ -1,3 +1,4 @@
+import { useMediaQuery } from "react-responsive";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
@@ -23,6 +24,9 @@ export const AssessmentPage = () => {
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
+  const isMobile = useMediaQuery({ maxWidth: 640 }); // Mobile
+  const isTablet = useMediaQuery({ minWidth: 641, maxWidth: 1024 })
+  
 
   const handleNext = () => {
     if (assessment && currentQuestion < assessment.questions.length - 1) {
@@ -143,22 +147,24 @@ export const AssessmentPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8 relative bg-cover bg-center bg-no-repeat">
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-8 relative bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${image})` }}
+    >
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-black bg-opacity-90"></div>
+
+      {/* Main Content */}
       <div
-        className="absolute inset-0 bg-black bg-opacity-90"
+        className="bg-white p-6 sm:p-8 rounded-lg shadow-xl relative z-10"
         style={{
-          backgroundImage: `url(${image})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          filter: "brightness(0.3)",
+          width: isMobile ? "90%" : isTablet ? "70%" : "600px", // Adjust width dynamically
         }}
-      ></div>
-      <div className="bg-white p-8 max-w-2xl w-full shadow-xl rounded-lg relative z-10">
+      >
+        {/* Matric Number Input on First Question */}
         {currentQuestion === 0 && (
           <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-gray-800">
-              {assessment.title}
-            </h2>
+            <h2 className="text-xl sm:text-3xl font-bold mb-4 text-gray-800">{assessment.title}</h2>
             <p className="text-gray-600 mb-6">{assessment.description}</p>
             <input
               type="text"
@@ -171,17 +177,16 @@ export const AssessmentPage = () => {
           </div>
         )}
 
+        {/* Questions Section */}
         {assessment.questions.length > 0 ? (
           <div className="mb-8">
-            <div className="mb-4 flex justify-between items-center">
-              <span className="text-sm text-gray-500">
+            {/* Progress Bar */}
+            <div className="mb-4 flex justify-between items-center text-sm text-gray-500">
+              <span>
                 Question {currentQuestion + 1} of {assessment.questions.length}
               </span>
-              <span className="text-sm text-gray-500">
-                {Math.round(
-                  ((currentQuestion + 1) / assessment.questions.length) * 100
-                )}
-                % Complete
+              <span>
+                {Math.round(((currentQuestion + 1) / assessment.questions.length) * 100)}% Complete
               </span>
             </div>
 
@@ -189,15 +194,14 @@ export const AssessmentPage = () => {
               <div
                 className="h-2 bg-blue-500 rounded-full transition-all duration-300"
                 style={{
-                  width: `${
-                    ((currentQuestion + 1) / assessment.questions.length) * 100
-                  }%`,
+                  width: `${((currentQuestion + 1) / assessment.questions.length) * 100}%`,
                 }}
               />
             </div>
 
-            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-              <p className="font-semibold text-xl mb-4">
+            {/* Question Display */}
+            <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border border-gray-200">
+              <p className="font-semibold text-lg sm:text-xl mb-4">
                 {assessment.questions[currentQuestion].question}
               </p>
               <div className="space-y-3">
@@ -206,18 +210,14 @@ export const AssessmentPage = () => {
                     <div
                       key={oIndex}
                       className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-500 transition cursor-pointer"
-                      onClick={() =>
-                        setAnswers({ ...answers, [currentQuestion]: option })
-                      }
+                      onClick={() => setAnswers({ ...answers, [currentQuestion]: option })}
                     >
                       <input
                         type="radio"
                         name={`q${currentQuestion}`}
                         value={option}
                         checked={answers[currentQuestion] === option}
-                        onChange={() =>
-                          setAnswers({ ...answers, [currentQuestion]: option })
-                        }
+                        onChange={() => setAnswers({ ...answers, [currentQuestion]: option })}
                         disabled={submitting}
                         className="w-4 h-4 text-blue-600"
                       />
@@ -229,14 +229,13 @@ export const AssessmentPage = () => {
             </div>
           </div>
         ) : (
-          <p className="text-gray-500 text-center">
-            No questions available for this assessment.
-          </p>
+          <p className="text-gray-500 text-center">No questions available for this assessment.</p>
         )}
 
+        {/* Navigation Buttons */}
         <div className="flex justify-between mt-6">
           <button
-            className={`px-6 py-2 rounded-lg transition ${
+            className={`px-4 sm:px-6 py-2 rounded-lg transition ${
               currentQuestion > 0
                 ? "bg-gray-600 text-white hover:bg-gray-700"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -249,17 +248,15 @@ export const AssessmentPage = () => {
 
           {currentQuestion < assessment.questions.length - 1 ? (
             <button
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-blue-700 transition"
               onClick={handleNext}
             >
               Next
             </button>
           ) : (
             <button
-              className={`px-6 py-2 rounded-lg transition ${
-                submitting
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:bg-green-700"
+              className={`px-4 sm:px-6 py-2 rounded-lg transition ${
+                submitting ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
               } text-white`}
               onClick={submitAssessment}
               disabled={submitting}
