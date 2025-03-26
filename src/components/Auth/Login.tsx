@@ -9,10 +9,10 @@ export const Login = () => {
   const [surname, setSurname] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true);
     if (!matricnumber || !surname) {
       setError("Both fields are required.");
       return;
@@ -88,9 +88,17 @@ export const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 flex justify-center items-center"
+            disabled={loading}
           >
-            Login
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 mr-2 border-t-2 border-white rounded-full"
+                viewBox="0 0 24 24"
+              ></svg>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
 

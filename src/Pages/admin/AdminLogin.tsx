@@ -12,9 +12,10 @@ export const AdminLogin = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ maxWidth: 640 }); // Mobile
   const isTablet = useMediaQuery({ minWidth: 641, maxWidth: 1024 }); // Tablet
-
+  const [loading, setLoading] = useState(false);
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
 
     if (!email || !password) {
@@ -62,12 +63,16 @@ export const AdminLogin = () => {
           maxWidth: isMobile ? "90%" : isTablet ? "70%" : "400px", // Adjust width based on screen size
         }}
       >
-        <h2 className="text-xl sm:text-2xl font-bold text-center">Admin Login</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-center">
+          Admin Login
+        </h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
 
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm sm:text-base">Email</label>
+            <label className="block text-gray-700 text-sm sm:text-base">
+              Email
+            </label>
             <input
               type="email"
               className="w-full p-2 border rounded text-sm sm:text-base"
@@ -78,7 +83,9 @@ export const AdminLogin = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm sm:text-base">Password</label>
+            <label className="block text-gray-700 text-sm sm:text-base">
+              Password
+            </label>
             <input
               type="password"
               className="w-full p-2 border rounded text-sm sm:text-base"
@@ -90,9 +97,17 @@ export const AdminLogin = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded text-sm sm:text-base"
+            className="w-full bg-blue-500 text-white p-2 rounded text-sm sm:text-base flex justify-center items-center"
+            disabled={loading}
           >
-            Login
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 mr-2 border-t-2 border-white rounded-full"
+                viewBox="0 0 24 24"
+              ></svg>
+            ) : (
+              "Login"
+            )}
           </button>
 
           <p className="mt-4 text-center text-sm sm:text-base">

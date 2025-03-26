@@ -8,19 +8,19 @@ export const Signup = () => {
   const [surname, setSurname] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true);
     if (!matricnumber || !surname) {
       setError("All fields are required.");
       return;
     }
 
     try {
-      const { error: insertError } = await supabase.from("users").insert([
-        { matricnumber, surname },
-      ]);
+      const { error: insertError } = await supabase
+        .from("users")
+        .insert([{ matricnumber, surname }]);
 
       if (insertError) {
         setError(insertError.message);
@@ -38,7 +38,7 @@ export const Signup = () => {
   return (
     <div className="relative flex items-center justify-center h-screen">
       {/* Background Image */}
-      <div 
+      <div
         className="absolute inset-0 bg-black bg-opacity-90"
         style={{
           backgroundImage: `url(${image})`,
@@ -76,8 +76,19 @@ export const Signup = () => {
             />
           </div>
 
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
-            Sign Up
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 flex justify-center items-center"
+            disabled={loading}
+          >
+            {loading ? (
+              <svg
+                className="animate-spin h-5 w-5 border-t-2 border-white rounded-full"
+                viewBox="0 0 24 24"
+              ></svg>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 

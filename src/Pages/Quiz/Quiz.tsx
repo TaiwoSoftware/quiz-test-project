@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import image from "../Quiz/book.png";
 import { useMediaQuery } from "react-responsive";
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+
 // ✅ Initialize Supabase
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL!,
@@ -33,6 +35,7 @@ export const Quiz = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const isTablet = useMediaQuery({ minWidth: 641, maxWidth: 1024 });
+
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -51,8 +54,6 @@ export const Quiz = () => {
         setLoading(false);
       }
     };
-
-    
 
     fetchQuestions();
   }, []);
@@ -85,6 +86,13 @@ export const Quiz = () => {
       } else {
         handleFinishQuiz();
       }
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+      setSelectedOption(null);
     }
   };
 
@@ -215,14 +223,34 @@ export const Quiz = () => {
                   ))}
                 </div>
 
-                {selectedOption && (
+                <div className="mt-4 flex gap-4">
                   <button
-                    className="mt-4 px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    onClick={handleNextQuestion}
+                    type="button"
+                    className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handlePreviousQuestion}
+                    disabled={currentQuestionIndex === 0}
                   >
-                    {currentQuestionIndex < questions.length - 1 ? "Next" : "Finish Quiz"}
+                    <ArrowLeft className="h-5 w-5" />
+                    Previous
                   </button>
-                )}
+                  
+                  {selectedOption && (
+                    <button
+                      type="button"
+                      className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 flex justify-center items-center gap-2"
+                      onClick={handleNextQuestion}
+                    >
+                      {currentQuestionIndex < questions.length - 1 ? (
+                        <>
+                          Next
+                          <ArrowRight className="h-5 w-5" />
+                        </>
+                      ) : (
+                        "Finish Quiz"
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             </>
           )
